@@ -1,4 +1,4 @@
-// components/DataTable.js (WITH DROPDOWN + ADVANCED SEARCH)
+// components/DataTable.js (WITH NOTES EXPAND FUNCTIONALITY)
 import { useState, useMemo, useEffect } from 'react';
 import {
   TableWrapper,
@@ -9,25 +9,26 @@ import {
   Select,
   SearchControls,
   ErrorMessage,
+  ExpandButton,
 } from './styles';
+import TeamNotes from './TeamNotes';
 
 export default function DataTable({ data, searchQuery, useRegex, searchMode }) {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(20);
   const [regexError, setRegexError] = useState('');
+  const [expandedRow, setExpandedRow] = useState(null);
 
-  // Reset to page 1 when search, rows per page, or mode changes
   useEffect(() => {
     setCurrentPage(1);
+    setExpandedRow(null);
   }, [searchQuery, itemsPerPage, useRegex, searchMode]);
 
-  // Filter data based on search query, regex, and boolean mode
   const filteredData = useMemo(() => {
     setRegexError('');
     if (!searchQuery.trim()) return data;
 
     return data.filter((row) => {
-      // Build a searchable string from the row
       const searchableText = [
         row.Constructor?.name || '',
         row.Constructor?.constructorId || '',
@@ -37,18 +38,16 @@ export default function DataTable({ data, searchQuery, useRegex, searchMode }) {
         row.points || '',
       ].join(' ').toLowerCase();
 
-      // REGEX MODE
       if (useRegex) {
         try {
           const regex = new RegExp(searchQuery, 'i');
           return regex.test(searchableText);
         } catch (err) {
           setRegexError(`Invalid regex: ${err.message}`);
-          return true; // Show all if regex is invalid
+          return true;
         }
       }
 
-      // BOOLEAN MODE (AND / OR)
       const terms = searchQuery
         .split(/\s+(?:AND|OR)\s+|\s+/i)
         .filter(t => t.trim())
@@ -57,12 +56,10 @@ export default function DataTable({ data, searchQuery, useRegex, searchMode }) {
       if (searchMode === 'OR') {
         return terms.some(term => searchableText.includes(term));
       }
-      // Default: AND
       return terms.every(term => searchableText.includes(term));
     });
   }, [data, searchQuery, useRegex, searchMode]);
 
-  // Pagination logic
   const totalPages = Math.ceil(filteredData.length / itemsPerPage);
   const startIdx = (currentPage - 1) * itemsPerPage;
   const endIdx = startIdx + itemsPerPage;
@@ -72,6 +69,10 @@ export default function DataTable({ data, searchQuery, useRegex, searchMode }) {
   const goToPrevPage = () => currentPage > 1 && setCurrentPage(currentPage - 1);
   const goToFirstPage = () => setCurrentPage(1);
   const goToLastPage = () => setCurrentPage(totalPages);
+
+  const toggleExpand = (rowId) => {
+    setExpandedRow(expandedRow === rowId ? null : rowId);
+  };
 
   return (
     <>
@@ -106,23 +107,47 @@ export default function DataTable({ data, searchQuery, useRegex, searchMode }) {
               <th>Nationality</th>
               <th>Points</th>
               <th>Wins</th>
+              <th>Notes</th>
             </tr>
           </thead>
           <tbody>
             {currentData.length > 0 ? (
-              currentData.map((row, idx) => (
-                <tr key={`${row.season}-${row.Constructor?.constructorId}-${idx}`}>
-                  <td style={{ color: '#FFB81C', fontWeight: 700 }}>{row.season}</td>
-                  <td>{row.position}</td>
-                  <td>{row.Constructor?.name}</td>
-                  <td>{row.Constructor?.nationality}</td>
-                  <td>{row.points}</td>
-                  <td>{row.wins}</td>
-                </tr>
-              ))
+              currentData.map((row, idx) => {
+                const rowId = `${row.season}-${row.Constructor?.constructorId}-${idx}`;
+                const isExpanded = expandedRow === rowId;
+                
+                return (
+                  <>
+                    <tr key={rowId}>
+                      <td style={{ color: '#FFB81C', fontWeight: 700 }}>{row.season}</td>
+                      <td>{row.position}</td>
+                      <td>{row.Constructor?.name}</td>
+                      <td>{row.Constructor?.nationality}</td>
+                      <td>{row.points}</td>
+                      <td>{row.wins}</td>
+                      <td>
+                        <ExpandButton onClick={() => toggleExpand(rowId)}>
+                          {isExpanded ? '📝 Hide' : '📝 View/Add'}
+                        </ExpandButton>
+                      </td>
+                    </tr>
+                    {isExpanded && (
+                      <tr key={`${rowId}-notes`}>
+                        <td colSpan="7" style={{ padding: 0 }}>
+                          <TeamNotes 
+                            teamId={`${row.Constructor?.constructorId}-${row.season}`}
+                            teamName={row.Constructor?.name}
+                            season={row.season}
+                          />
+                        </td>
+                      </tr>
+                    )}
+                  </>
+                );
+              })
             ) : (
               <tr>
-                <td colSpan="6" style={{ textAlign: 'center', padding: '20px' }}>
+                <td colSpan="7" style={{ textAlign: 'center', padding: '20px' }}>
                   No results found
                 </td>
               </tr>

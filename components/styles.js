@@ -447,3 +447,165 @@ export const ErrorMessage = styled.div`
   margin: 10px 0;
   font-size: 0.9rem;
 `;
+
+
+export const NotesSection = styled.div`
+  background: rgba(0, 0, 0, 0.3);
+  border-left: 3px solid #FFB81C;
+  padding: 20px;
+  margin-top: 10px;
+  animation: slideDown 0.3s ease-out;
+
+  @keyframes slideDown {
+    from { opacity: 0; max-height: 0; }
+    to { opacity: 1; max-height: 1000px; }
+  }
+`;
+
+export const NoteItem = styled.div`
+  background: rgba(255, 184, 28, 0.08);
+  border: 1px solid rgba(255, 184, 28, 0.3);
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin-bottom: 10px;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: rgba(255, 184, 28, 0.12);
+    border-color: #FFB81C;
+  }
+`;
+
+export const NoteHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+  font-size: 0.85rem;
+`;
+
+export const NoteAuthor = styled.span`
+  color: #FFB81C;
+  font-weight: 700;
+`;
+
+export const NoteDate = styled.span`
+  color: rgba(232, 232, 232, 0.6);
+  font-size: 0.8rem;
+`;
+
+export const NoteText = styled.p`
+  color: #E8E8E8;
+  margin: 6px 0 0 0;
+  line-height: 1.5;
+  font-size: 0.95rem;
+`;
+
+export const NoteForm = styled.form`
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 15px;
+  padding-top: 15px;
+  border-top: 1px solid rgba(255, 184, 28, 0.2);
+`;
+
+export const NoteInput = styled.input`
+  padding: 10px 14px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 2px solid rgba(255, 184, 28, 0.5);
+  border-radius: 6px;
+  color: #E8E8E8;
+  font-size: 0.95rem;
+  font-family: inherit;
+
+  &::placeholder {
+    color: rgba(232, 232, 232, 0.4);
+  }
+
+  &:focus {
+    outline: none;
+    border-color: #FFB81C;
+  }
+`;
+
+export const NoteTextarea = styled.textarea`
+  padding: 10px 14px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 2px solid rgba(255, 184, 28, 0.5);
+  border-radius: 6px;
+  color: #E8E8E8;
+  font-size: 0.95rem;
+  font-family: inherit;
+  resize: vertical;
+  min-height: 70px;
+
+  &::placeholder {
+    color: rgba(232, 232, 232, 0.4);
+  }
+
+  &:focus {
+    outline: none;
+    border-color: #FFB81C;
+  }
+`;
+
+export const NoteButton = styled.button`
+  padding: 10px 18px;
+  background: #FFB81C;
+  color: #001F3F;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 700;
+  transition: all 0.2s ease;
+  align-self: flex-start;
+
+  &:hover:not(:disabled) {
+    background: #FFD700;
+    transform: scale(1.05);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+`;
+
+export const DeleteButton = styled.button`
+  background: transparent;
+  color: rgba(255, 107, 107, 0.7);
+  border: none;
+  cursor: pointer;
+  font-size: 1.2rem;
+  padding: 0 4px;
+  transition: all 0.2s ease;
+
+  &:hover {
+    color: #FF6B6B;
+    transform: scale(1.2);
+  }
+`;
+
+export const ExpandButton = styled.button`
+  background: transparent;
+  border: 1px solid #FFB81C;
+  color: #FFB81C;
+  padding: 4px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: #FFB81C;
+    color: #001F3F;
+  }
+`;
+
+export const EmptyNotesMessage = styled.p`
+  color: rgba(232, 232, 232, 0.6);
+  font-style: italic;
+  text-align: center;
+  padding: 20px;
+`;
